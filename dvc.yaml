@@ -1,0 +1,43 @@
+stages:
+  ingestion:
+    cmd: python -c "from src.components import data_ingestion; data_ingestion.run()"
+    deps:
+      - data/raw/iris.csv
+      - src/components/data_ingestion.py
+    outs:
+      - artifacts/ingested.csv
+  validation:
+    cmd: python -c "from src.components import data_validation; data_validation.run()"
+    deps:
+      - artifacts/ingested.csv
+      - src/components/data_validation.py
+    outs:
+      - artifacts/validated.csv
+  transformation:
+    cmd: python -c "from src.components import data_transformation; data_transformation.run()"
+    deps:
+      - artifacts/validated.csv
+      - src/components/data_transformation.py
+    outs:
+      - artifacts/train.csv
+      - artifacts/test.csv
+      - artifacts/preprocessor.pkl
+      - artifacts/reference_stats.json
+  training:
+    cmd: python -c "from src.components import model_trainer; model_trainer.run()"
+    deps:
+      - artifacts/train.csv
+      - artifacts/preprocessor.pkl
+      - src/components/model_trainer.py
+    outs:
+      - artifacts/model.pkl
+  evaluation:
+    cmd: python -c "from src.components import model_evaluation; model_evaluation.run()"
+    deps:
+      - artifacts/model.pkl
+      - artifacts/test.csv
+      - artifacts/validated.csv
+      - src/components/model_evaluation.py
+    metrics:
+      - artifacts/metrics.json:
+          cache: false
