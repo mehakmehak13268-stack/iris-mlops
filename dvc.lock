@@ -6,8 +6,8 @@ stages:
     deps:
     - path: data/raw/iris.csv
       hash: md5
-      md5: 013d0da08d6506664ce640459139176b
-      size: 3858
+      md5: 9ff693587dc1bf43348aa3c72dec03ef
+      size: 3546
     - path: src/components/data_ingestion.py
       hash: md5
       md5: 537b6a0cf67769346a15bfcf5d147fbf
@@ -15,16 +15,16 @@ stages:
     outs:
     - path: artifacts/ingested.csv
       hash: md5
-      md5: 500a0acbd112b7c512929eac892f9864
-      size: 4009
+      md5: 2f779ada85b508e0a1901a63ad310e6b
+      size: 3685
   validation:
     cmd: python -c "from src.components import data_validation; 
       data_validation.run()"
     deps:
     - path: artifacts/ingested.csv
       hash: md5
-      md5: 500a0acbd112b7c512929eac892f9864
-      size: 4009
+      md5: 2f779ada85b508e0a1901a63ad310e6b
+      size: 3685
     - path: src/components/data_validation.py
       hash: md5
       md5: 8c30b5ef0210a33be059caaa26cbabe1
@@ -32,16 +32,16 @@ stages:
     outs:
     - path: artifacts/validated.csv
       hash: md5
-      md5: 91377b5325bea2fe7559459d86e03296
-      size: 3982
+      md5: 2f779ada85b508e0a1901a63ad310e6b
+      size: 3685
   transformation:
     cmd: python -c "from src.components import data_transformation; 
       data_transformation.run()"
     deps:
     - path: artifacts/validated.csv
       hash: md5
-      md5: 91377b5325bea2fe7559459d86e03296
-      size: 3982
+      md5: 2f779ada85b508e0a1901a63ad310e6b
+      size: 3685
     - path: src/components/data_transformation.py
       hash: md5
       md5: 706ca8ef959ec972623eec66ef9bf53c
@@ -49,32 +49,32 @@ stages:
     outs:
     - path: artifacts/preprocessor.pkl
       hash: md5
-      md5: 974473ff1d581109e8e3a8eb8d784016
+      md5: d37dc73615dbf834a07016ca5e71c432
       size: 1015
     - path: artifacts/reference_stats.json
       hash: md5
-      md5: 4be63701d662d4a3b016a94ea27ffa56
-      size: 361
+      md5: fbc2dfa72c3fd18e8b1bddc27531d366
+      size: 362
     - path: artifacts/test.csv
       hash: md5
-      md5: 008ad8ffec2cb677dbc3c8ddc3797dc8
-      size: 849
+      md5: 626be8792a760d2d828a41da2848c6c1
+      size: 795
     - path: artifacts/train.csv
       hash: md5
-      md5: d641b24383c5fc8783a7b9d23d2a34ce
-      size: 3192
+      md5: 7e046ff3f298d55f9917a049942f3bb5
+      size: 2949
   training:
     cmd: python -c "from src.components import model_trainer; 
       model_trainer.run()"
     deps:
     - path: artifacts/preprocessor.pkl
       hash: md5
-      md5: 974473ff1d581109e8e3a8eb8d784016
+      md5: d37dc73615dbf834a07016ca5e71c432
       size: 1015
     - path: artifacts/train.csv
       hash: md5
-      md5: d641b24383c5fc8783a7b9d23d2a34ce
-      size: 3192
+      md5: 7e046ff3f298d55f9917a049942f3bb5
+      size: 2949
     - path: src/components/model_trainer.py
       hash: md5
       md5: 2ec77d3da4cbca3bdd37bfb8bf6dfebc
@@ -82,24 +82,24 @@ stages:
     outs:
     - path: artifacts/model.pkl
       hash: md5
-      md5: 94f42da031ceff6819bdd0edb5a10935
-      size: 29048
+      md5: 03ccf78ebf86928912411e2ae7d7bac7
+      size: 29640
   evaluation:
     cmd: python -c "from src.components import model_evaluation; 
       model_evaluation.run()"
     deps:
     - path: artifacts/model.pkl
       hash: md5
-      md5: 94f42da031ceff6819bdd0edb5a10935
-      size: 29048
+      md5: 03ccf78ebf86928912411e2ae7d7bac7
+      size: 29640
     - path: artifacts/test.csv
       hash: md5
-      md5: 008ad8ffec2cb677dbc3c8ddc3797dc8
-      size: 849
+      md5: 626be8792a760d2d828a41da2848c6c1
+      size: 795
     - path: artifacts/validated.csv
       hash: md5
-      md5: 91377b5325bea2fe7559459d86e03296
-      size: 3982
+      md5: 2f779ada85b508e0a1901a63ad310e6b
+      size: 3685
     - path: src/components/model_evaluation.py
       hash: md5
       md5: 8c0e70ea13accdbc9f4b5c60dfe1cd76
@@ -107,5 +107,5 @@ stages:
     outs:
     - path: artifacts/metrics.json
       hash: md5
-      md5: a00fa6b2a4281cf4589ca077a171de42
-      size: 52
+      md5: 3a1b9735ae48549319c28edf8d76132e
+      size: 81

@@ -1,4 +1,4 @@
 {
-  "test_accuracy": 1.0,
-  "cv_accuracy": 0.96
+  "test_accuracy": 0.9285714285714286,
+  "cv_accuracy": 0.9563492063492063
 }
