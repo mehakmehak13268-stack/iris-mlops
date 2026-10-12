@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iris Flower Classifier</title>
+<style>
+  :root { --bg:#f4f6fb; --card:#fff; --ink:#1c2333; --muted:#667; --accent:#4f46e5; --line:#dde1ee; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12141c; --card:#1b1e2b; --ink:#eef0f8; --muted:#9aa; --line:#2c3042; } }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,Segoe UI,Arial,sans-serif; background:var(--bg); color:var(--ink);
+         min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:28px; width:100%; max-width:460px; }
+  h1 { margin:0 0 4px; font-size:1.4rem; }
+  p.sub { margin:0 0 20px; color:var(--muted); font-size:.9rem; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  label { font-size:.8rem; color:var(--muted); display:block; margin-bottom:4px; }
+  input { width:100%; padding:10px; font-size:1rem; border:1px solid var(--line); border-radius:8px; background:transparent; color:var(--ink); }
+  .presets { display:flex; gap:8px; margin:16px 0; flex-wrap:wrap; }
+  .presets button { flex:1; padding:8px; font-size:.8rem; border:1px solid var(--line); background:transparent; color:var(--ink); border-radius:8px; cursor:pointer; }
+  #go { width:100%; padding:12px; font-size:1rem; font-weight:600; border:0; border-radius:10px; background:var(--accent); color:#fff; cursor:pointer; }
+  #go:disabled { opacity:.6; }
+  #result { margin-top:18px; padding:16px; border-radius:10px; text-align:center; font-size:1.3rem; font-weight:700;
+            border:1px dashed var(--line); min-height:56px; }
+  #info { margin-top:14px; font-size:.8rem; color:var(--muted); text-align:center; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🌸 Iris Flower Classifier</h1>
+  <p class="sub">Enter the measurements in cm. A neural network predicts the species.</p>
+  <div class="grid">
+    <div><label>Sepal length</label><input id="sl" type="number" step="0.1" value="5.1"></div>
+    <div><label>Sepal width</label><input id="sw" type="number" step="0.1" value="3.5"></div>
+    <div><label>Petal length</label><input id="pl" type="number" step="0.1" value="1.4"></div>
+    <div><label>Petal width</label><input id="pw" type="number" step="0.1" value="0.2"></div>
+  </div>
+  <div class="presets">
+    <button onclick="fill(5.1,3.5,1.4,0.2)">Setosa example</button>
+    <button onclick="fill(6.0,2.9,4.5,1.5)">Versicolor example</button>
+    <button onclick="fill(6.9,3.1,5.4,2.1)">Virginica example</button>
+  </div>
+  <button id="go" onclick="predict()">Predict species</button>
+  <div id="result">—</div>
+  <div id="info">Loading model info…</div>
+</div>
+<script>
+  const $ = id => document.getElementById(id);
+  function fill(a,b,c,d){ $('sl').value=a; $('sw').value=b; $('pl').value=c; $('pw').value=d; predict(); }
+  async function predict(){
+    const btn=$('go'), out=$('result'); btn.disabled=true; out.textContent='Predicting…';
+    try {
+      const r = await fetch('/predict',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({sepal_length:+$('sl').value,sepal_width:+$('sw').value,
+                             petal_length:+$('pl').value,petal_width:+$('pw').value})});
+      if(!r.ok) throw new Error('Server error');
+      out.textContent = '🌼 ' + (await r.json()).species;
+    } catch(e){ out.textContent='Error: '+e.message; }
+    btn.disabled=false;
+  }
+  fetch('/metrics').then(r=>r.json()).then(m=>{
+    $('info').textContent = `Test accuracy ${(m.test_accuracy*100).toFixed(1)}% · Cross-validation ${(m.cv_accuracy*100).toFixed(1)}%`;
+  }).catch(()=>{ $('info').textContent=''; });
+</script>
+</body>
+</html>

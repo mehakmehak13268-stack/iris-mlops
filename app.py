@@ -1,5 +1,7 @@
 import json
+from pathlib import Path
 from fastapi import FastAPI
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from src.pipeline.prediction_pipeline import Predictor
 from src.monitoring import log_prediction, drift_report
@@ -17,6 +19,11 @@ class Flower(BaseModel):
 
 
 @app.get("/")
+def home():
+    return FileResponse(Path(__file__).parent / "static" / "index.html")
+
+
+@app.get("/health")
 def health():
     return {"status": "ok"}
 
