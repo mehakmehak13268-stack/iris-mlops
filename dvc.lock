@@ -6,8 +6,8 @@ stages:
     deps:
     - path: data/raw/iris.csv
       hash: md5
-      md5: 013d0da08d6506664ce640459139176b
-      size: 3858
+      md5: 500a0acbd112b7c512929eac892f9864
+      size: 4009
     - path: src/components/data_ingestion.py
       hash: md5
       md5: 537b6a0cf67769346a15bfcf5d147fbf
