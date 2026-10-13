@@ -24,6 +24,7 @@ def run():
     # ---- MLflow tracking (never breaks the pipeline if it fails) ----
     try:
         import mlflow
+        import mlflow.sklearn
         mlflow.set_experiment("iris-mlops")
         with mlflow.start_run():
             mlflow.log_param("model", "NeuralNetwork-MLP")
@@ -34,6 +35,10 @@ def run():
             mlflow.log_metric("cv_accuracy", cv)
             mlflow.log_artifact(MODEL)
             mlflow.log_artifact(METRICS)
+            # register this model as a new version in the Model Registry
+            mlflow.sklearn.log_model(model, name="model",
+                                     registered_model_name="iris-classifier",
+                                     serialization_format="cloudpickle")
     except Exception as e:
         logger.warning(f"MLflow logging skipped: {e}")
 

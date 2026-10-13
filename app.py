@@ -3,11 +3,13 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from prometheus_fastapi_instrumentator import Instrumentator
 from src.pipeline.prediction_pipeline import Predictor
 from src.monitoring import log_prediction, drift_report
 from src.config import METRICS
 
 app = FastAPI(title="Iris MLOps")
+Instrumentator().instrument(app).expose(app, endpoint="/prom-metrics", include_in_schema=False)
 predictor = Predictor()
 
 
